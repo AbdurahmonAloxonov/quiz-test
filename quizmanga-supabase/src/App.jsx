@@ -29,6 +29,9 @@ const SUBJECTS = [
   { id:24, name:"Sport musobaqalari", icon:"🏆", color:"#EAB308", short:"SMus", topics:["Olimpiada","Tashkil etish","Hakamlik"] },
   { id:25, name:"Ta'limda differensial yondashuv", icon:"🎯", color:"#D946EF", short:"Diff", topics:["Individual yondashuv","Maxsus ehtiyojlar","Tabaqalashtirish"] },
 ];
+// Faqat PRO foydalanuvchilar uchun fanlar (PROda ham 5 martadan)
+const PRO_SUBJECTS = new Set([9,10,12,13,14,15,16,17,18,19,20,21,22,23,24,25]);
+const PRO_LIMIT = 5;
 
 const DIFF = {
   easy:   { label:"Oson",  ru:"Лёгкий", en:"Easy",   color:"#00C896" },
@@ -940,8 +943,13 @@ function AppInner(){
   const startSubject=(s)=>{
     const qc=(qBank[s.id]||[]).length;
     if(!qc)return showFlash("Bu fanda hali savol yo'q","err");
-    const limit=isPro?20:1;
-    if(attemptsOf(s.id)>=limit){ if(!isPro)return setScreen("pro"); return showFlash("Bu fan uchun urinishlar limiti (20) tugadi","err"); }
+    const proOnly=PRO_SUBJECTS.has(s.id);
+    if(proOnly&&!isPro)return setScreen("pro");
+    const limit=proOnly?PRO_LIMIT:(isPro?20:1);
+    if(attemptsOf(s.id)>=limit){
+      if(!isPro&&!proOnly)return setScreen("pro");
+      return showFlash(`Bu fan uchun urinishlar limiti (${limit}) tugadi`,"err");
+    }
     launch("subject",s.name,buildQs([s.id],[Math.min(20,qc)],qBank),null,s.id);
   };
   const start50=()=>{
@@ -1154,7 +1162,8 @@ function AppInner(){
         {customTests.length>0&&<div style={{marginBottom:20}}><div style={{fontSize:10,color:"#4F6EF7",letterSpacing:4,fontWeight:700,marginBottom:12}}>ADMIN TESTLARI</div><div style={{display:"flex",gap:12,overflowX:"auto",paddingBottom:4}}>{customTests.map((tt,i)=>{const tq=tt.counts.reduce((a,c)=>a+c,0);return<div key={tt.id||i} className="card ch" onClick={()=>launchCustom(tt)} style={{padding:"1.1rem",cursor:"pointer",flexShrink:0,width:190,borderColor:tt.color+"30",background:`linear-gradient(135deg,${tt.color}15,transparent)`}}><div style={{fontSize:24,marginBottom:5}}>{tt.icon}</div><div style={{fontWeight:800,fontSize:13,color:tt.color,marginBottom:3}}>{tt.title}</div><div style={{fontSize:11,color:th.sub}}>{tq} savol · {tt.timeMin}daq</div></div>;})}</div></div>}
         <div style={{fontSize:10,color:th.sub,letterSpacing:4,fontWeight:700,marginBottom:14}}>{t("subjects").toUpperCase()}</div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(250px,1fr))",gap:12}}>
-          {SUBJECTS.map(s=>{const d=completedTests[s.id];const qc=(qBank[s.id]||[]).length;const locked=attemptsOf(s.id)>=(isPro?20:1);return<div key={s.id} className="card ch" onClick={()=>startSubject(s)} style={{padding:"16px",cursor:"pointer"}}>
+          {SUBJECTS.map(s=>{const d=completedTests[s.id];const qc=(qBank[s.id]||[]).length;const proOnly=PRO_SUBJECTS.has(s.id);const lim=proOnly?PRO_LIMIT:(isPro?20:1);const locked=(proOnly&&!isPro)||attemptsOf(s.id)>=lim;return<div key={s.id} className="card ch" onClick={()=>startSubject(s)} style={{padding:"16px",cursor:"pointer",position:"relative"}}>
+            {proOnly&&<span style={{position:"absolute",top:10,right:10,fontSize:9,fontWeight:800,letterSpacing:1,background:"var(--accent2)",color:"#000",padding:"2px 7px",borderRadius:6}}>PRO</span>}
             <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:13}}>
               <div style={{width:44,height:44,borderRadius:12,background:s.color+"1f",display:"flex",alignItems:"center",justifyContent:"center",fontSize:21,flexShrink:0}}>{s.icon}</div>
               <div style={{flex:1,minWidth:0}}>
