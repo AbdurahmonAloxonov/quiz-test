@@ -585,7 +585,7 @@ function AdminPanel({qBank,setQBank,customTests,setCustomTests,users,setUsers,te
 
       {/* Sidebar */}
       <div style={{width:210,background:th.nav,borderRight:`1px solid ${th.border}`,display:"flex",flexDirection:"column",flexShrink:0}} className="hideMob">
-        <div style={{padding:"1.2rem 1.4rem",borderBottom:`1px solid ${th.border}`}}><div className="brand" style={{fontWeight:900,fontSize:15}}>QUIZ<span style={{color:"#4F6EF7"}}>MANGA</span></div><span className="adminBadge" style={{marginTop:5,display:"inline-block"}}>ADMIN</span></div>
+        <div style={{padding:"1.2rem 1.4rem",borderBottom:`1px solid ${th.border}`}}><div className="brand" style={{fontWeight:900,fontSize:15}}>Fanlar<span style={{color:"#4F6EF7"}}>Edu</span></div><span className="adminBadge" style={{marginTop:5,display:"inline-block"}}>ADMIN</span></div>
         <nav style={{flex:1,padding:".6rem 0"}}>{SIDEBAR.map(([id,ic,lb])=><div key={id} onClick={()=>setView(id)} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 1.4rem",cursor:"pointer",background:view===id?"#4F6EF715":"transparent",borderLeft:`3px solid ${view===id?"#4F6EF7":"transparent"}`,fontSize:13,fontWeight:view===id?800:500,color:view===id?"#A0B4FF":th.sub,transition:"all .15s"}}><span style={{fontSize:16}}>{ic}</span>{lb}</div>)}</nav>
         <div style={{padding:"1rem 1.4rem",borderTop:`1px solid ${th.border}`}}><button className="mb" onClick={onBack} style={{width:"100%",background:"transparent",color:th.sub,borderColor:th.border,padding:"9px",fontSize:11,borderRadius:7}}>← QAYTISH</button></div>
       </div>
@@ -796,7 +796,7 @@ function AppInner(){
   const avgPct=testHistory.length?Math.round(testHistory.reduce((a,c)=>a+c.pct,0)/testHistory.length):0;
   const isPro = !!user && (user.role==="admin" || user.role==="teacher" || (user.plan==="pro" && (!user.pro_until || new Date(user.pro_until).getTime()>Date.now())));
   const proUntilStr = user?.pro_until ? new Date(user.pro_until).toLocaleDateString("uz-UZ") : null;
-  const payCfg = (typeof window!=="undefined" && window.QUIZMANGA_CONFIG && window.QUIZMANGA_CONFIG.pay) || { price:"30 000", card:"8600 1234 5678 9012", name:"QuizManga", phone:"+998 90 123 45 67", telegram:"@quizmanga_admin" };
+  const payCfg = (typeof window!=="undefined" && window.QUIZMANGA_CONFIG && window.QUIZMANGA_CONFIG.pay) || { price:"30 000", card:"8600 1234 5678 9012", name:"FanlarEdu", phone:"+998 90 123 45 67", telegram:"@quizmanga_admin" };
   const tgUser = (payCfg.telegram||"@quizmanga_admin").replace(/^@/,"").replace(/^https?:\/\/t\.me\//,"");
   const CSS=buildCSS(th);
   const C={background:th.card,border:`${th.cardBdW} solid ${th.cardBd}`,borderRadius:th.radius,boxShadow:th.cardShadow};
@@ -987,7 +987,7 @@ function AppInner(){
   const TopBar=({title,showBack,backTo})=>(
     <div style={{background:th.nav,borderBottom:`1px solid ${th.border}`,padding:"0 1.25rem",height:56,position:"sticky",top:0,zIndex:100}}>
       <div style={{maxWidth:1180,margin:"0 auto",display:"flex",alignItems:"center",height:"100%",gap:8}}>
-        {showBack?<button className="mb" onClick={()=>setScreen(backTo||"dashboard")} style={{background:"transparent",color:th.text,borderColor:th.border,padding:"7px 12px",fontSize:11,borderRadius:6}}>← {t("back")}</button>:<span className="brand" style={{fontWeight:900,fontSize:18}}>QUIZ<span style={{color:"var(--accent)"}}>MANGA</span></span>}
+        {showBack?<button className="mb" onClick={()=>setScreen(backTo||"dashboard")} style={{background:"transparent",color:th.text,borderColor:th.border,padding:"7px 12px",fontSize:11,borderRadius:6}}>← {t("back")}</button>:<span className="brand" style={{fontWeight:900,fontSize:18}}>Fanlar<span style={{color:"var(--accent)"}}>Edu</span></span>}
         {title&&<span style={{fontWeight:800,fontSize:15}}>{title}</span>}
         <div style={{marginLeft:"auto",display:"flex",gap:6,alignItems:"center"}}>
           <select value={lang} onChange={e=>setLang(e.target.value)} style={{width:"auto",padding:"5px 8px!important",fontSize:11}}>{["uz","ru","en"].map(l=><option key={l} value={l}>{l.toUpperCase()}</option>)}</select>
@@ -1003,7 +1003,7 @@ function AppInner(){
   if(!loaded)return(
     <div style={{minHeight:"100vh",background:th.bg,color:th.text,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"var(--font-body)",gap:18}}>
       <style>{CSS}</style>
-      <div className="brand" style={{fontWeight:900,fontSize:34,animation:"pop .5s"}}>QUIZ<span style={{color:"var(--accent)"}}>MANGA</span></div>
+      <div className="brand" style={{fontWeight:900,fontSize:34,animation:"pop .5s"}}>Fanlar<span style={{color:"var(--accent)"}}>Edu</span></div>
       <div style={{display:"flex",gap:7}}>{[0,1,2].map(i=><div key={i} style={{width:11,height:11,borderRadius:"50%",background:"var(--accent)",animation:`pop .6s ${i*.15}s infinite alternate`}} />)}</div>
       <div style={{color:th.sub,fontSize:13}}>Ma'lumotlar yuklanmoqda...</div>
     </div>
@@ -1015,7 +1015,7 @@ function AppInner(){
       {flash&&<div style={{position:"fixed",top:18,right:18,background:flash.ty==="err"?"#C0392B":"#00C896",padding:"10px 20px",borderRadius:8,fontWeight:700,fontSize:13,zIndex:1000,color:"#fff",animation:"sIn .3s"}}>{flash.m}</div>}
       <div style={{flex:"0 0 42%",background:"var(--accent)",display:"flex",flexDirection:"column",justifyContent:"center",padding:"3rem",position:"relative",overflow:"hidden"}} className="hideMob">
         <div style={{position:"absolute",inset:0,backgroundImage:"repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,.03) 20px,rgba(255,255,255,.03) 21px)"}} />
-        <div className="brand" style={{fontSize:54,fontWeight:900,lineHeight:.9,color:"#fff",marginBottom:18}}>QUIZ<br/>MANGA</div>
+        <div className="brand" style={{fontSize:54,fontWeight:900,lineHeight:.9,color:"#fff",marginBottom:18}}>Fanlar<br/>Edu</div>
         <div style={{color:"rgba(255,255,255,.8)",fontSize:14,lineHeight:2}}>✦ 11 ta fan testlari<br/>✦ DTM simulyatori<br/>✦ Tahlil rejimi va analitika<br/>✦ 3 tilda · Light/Dark</div>
         <div style={{marginTop:36,display:"flex",gap:8,flexWrap:"wrap"}}>{["📐","⚡","🧪","🌍","💻","⚖️"].map((ic,i)=><div key={i} style={{width:36,height:36,borderRadius:8,background:"rgba(255,255,255,.16)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17}}>{ic}</div>)}</div>
       </div>
@@ -1124,7 +1124,7 @@ function AppInner(){
       {flash&&<div style={{position:"fixed",top:18,right:18,background:flash.ty==="err"?"#C0392B":"#00C896",padding:"10px 20px",borderRadius:8,fontWeight:700,fontSize:13,zIndex:1000,color:"#fff",animation:"sIn .3s"}}>{flash.m}</div>}
       <div style={{background:th.nav,borderBottom:`1px solid ${th.border}`,padding:"6px 1.25rem",minHeight:56,position:"sticky",top:0,zIndex:100}} className="padMob">
         <div className="appHeader" style={{maxWidth:1180,margin:"0 auto",minHeight:44}}>
-          <span className="brand" style={{fontWeight:900,fontSize:18}}>QUIZ<span style={{color:"var(--accent)"}}>MANGA</span></span>
+          <span className="brand" style={{fontWeight:900,fontSize:18}}>Fanlar<span style={{color:"var(--accent)"}}>Edu</span></span>
           <div style={{marginLeft:"auto",display:"flex",gap:6,alignItems:"center",flexWrap:"wrap",justifyContent:"flex-end"}}>
             <button className="mb" onClick={()=>setScreen("groups")} title="Guruhlar" style={{background:th.soft,color:th.text,borderColor:th.border,padding:"7px 12px",fontSize:13,borderRadius:8}}>👥</button>
             <button className="mb hideMob" onClick={()=>setScreen("proHub")} style={{background:"var(--a12)",color:"var(--accent)",borderColor:"transparent",padding:"7px 14px",fontSize:11,borderRadius:8}}>⭐ {t("proHub")}</button>
