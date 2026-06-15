@@ -796,7 +796,7 @@ function AppInner(){
   const avgPct=testHistory.length?Math.round(testHistory.reduce((a,c)=>a+c.pct,0)/testHistory.length):0;
   const isPro = !!user && (user.role==="admin" || user.role==="teacher" || (user.plan==="pro" && (!user.pro_until || new Date(user.pro_until).getTime()>Date.now())));
   const proUntilStr = user?.pro_until ? new Date(user.pro_until).toLocaleDateString("uz-UZ") : null;
-  const payCfg = (typeof window!=="undefined" && window.QUIZMANGA_CONFIG && window.QUIZMANGA_CONFIG.pay) || { price:"100 000", card:"8600 1234 5678 9012", name:"QuizManga", phone:"+998 90 123 45 67", telegram:"@quizmanga_admin" };
+  const payCfg = (typeof window!=="undefined" && window.QUIZMANGA_CONFIG && window.QUIZMANGA_CONFIG.pay) || { price:"30 000", card:"8600 1234 5678 9012", name:"QuizManga", phone:"+998 90 123 45 67", telegram:"@quizmanga_admin" };
   const tgUser = (payCfg.telegram||"@quizmanga_admin").replace(/^@/,"").replace(/^https?:\/\/t\.me\//,"");
   const CSS=buildCSS(th);
   const C={background:th.card,border:`${th.cardBdW} solid ${th.cardBd}`,borderRadius:th.radius,boxShadow:th.cardShadow};
