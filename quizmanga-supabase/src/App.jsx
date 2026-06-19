@@ -32,6 +32,9 @@ const SUBJECTS = [
 // Faqat PRO foydalanuvchilar uchun fanlar (PROda ham 5 martadan)
 const PRO_SUBJECTS = new Set([9,10,12,13,14,15,16,17,18,19,20,21,22,23,24,25]);
 const PRO_LIMIT = 5;
+// Qurilma identifikatori (bitta akkaunt = bitta qurilma uchun)
+function getDeviceId(){ try{ let d=localStorage.getItem("fe_device"); if(!d){ d=(typeof crypto!=="undefined"&&crypto.randomUUID)?crypto.randomUUID():(Date.now()+"-"+Math.random().toString(16).slice(2)); localStorage.setItem("fe_device",d);} return d; }catch(e){ return "nodevice"; } }
+function isStaffRole(r){ return r==="admin"||r==="teacher"; }
 
 const DIFF = {
   easy:   { label:"Oson",  ru:"Лёгкий", en:"Easy",   color:"#00C896" },
@@ -896,6 +899,7 @@ function AppInner(){
       const session=await auth.getSession();
       if(session?.user){
         let prof; for(let i=0;i<5&&!prof;i++){ try{prof=await pApi.me(session.user.id);}catch(_){ await new Promise(r=>setTimeout(r,400)); } }
+        await claimDevice(session.user.id,(prof||{}).role||form.role);
         setUser({...(prof||{name:form.name,role:form.role,avatar}),id:session.user.id,email:session.user.email});
         await loadAllData(prof); setScreen("dashboard"); play("win"); showFlash(`${t("welcome")}, ${form.name}! 🎉`);
         setForm({name:"",email:"",password:"",confirm:"",role:"student"});
@@ -912,6 +916,7 @@ function AppInner(){
       const { user:authUser }=await auth.signIn({email:loginToEmail(form.email),password:form.password});
       const prof=await pApi.me(authUser.id);
       if(prof.blocked){ await auth.signOut(); return showFlash("Hisobingiz bloklangan!","err"); }
+      await claimDevice(authUser.id,prof.role);
       setUser({...prof,email:authUser.email}); await loadAllData(prof);
       setScreen("dashboard"); play("win"); showFlash(`${t("welcome")}, ${prof.name}! ⚡`);
       setForm({name:"",email:"",password:"",confirm:"",role:"student"});
@@ -931,6 +936,20 @@ function AppInner(){
     }catch(err){ showFlash(err.message||"Xato","err"); }
   };
   const doLogout=async()=>{ play("click"); await auth.signOut(); };
+
+  // ── Qurilma cheklovi (bitta akkaunt = bitta qurilma; admin/o'qituvchi ozod) ──
+  const claimDevice=async(uid,role)=>{ if(isStaffRole(role))return; try{ await pApi.setDevice(uid,getDeviceId()); }catch(_){} };
+  const checkDevice=async(uid,role)=>{ if(isStaffRole(role))return; try{ const remote=await pApi.deviceOf(uid); if(remote && remote!==getDeviceId()){ showFlash("Bu akkauntga boshqa qurilmadan kirildi","err"); setTimeout(()=>auth.signOut(),1600); } }catch(_){} };
+  useEffect(()=>{
+    if(!user?.id || isStaffRole(user.role)) return;
+    let alive=true; const run=()=>{ if(alive) checkDevice(user.id,user.role); };
+    const t0=setTimeout(run,4000);
+    const tid=setInterval(run,45000);
+    const onVis=()=>{ if(document.visibilityState==="visible") run(); };
+    document.addEventListener("visibilitychange",onVis);
+    return ()=>{ alive=false; clearTimeout(t0); clearInterval(tid); document.removeEventListener("visibilitychange",onVis); };
+    /* eslint-disable-next-line */
+  },[user?.id,user?.role]);
 
   // ── TEST ──
   const launch=(type,title,questions,timeLimit,subjectId=null)=>{

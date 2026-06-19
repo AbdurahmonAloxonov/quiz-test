@@ -53,6 +53,15 @@ export const profiles = {
     if (error) throw error;
     return data;
   },
+  async setDevice(userId, device) {
+    const { error } = await supabase.from("profiles").update({ device_id: device }).eq("id", userId);
+    if (error) throw error;
+  },
+  async deviceOf(userId) {
+    const { data, error } = await supabase.from("profiles").select("device_id").eq("id", userId).single();
+    if (error) throw error;
+    return data?.device_id || null;
+  },
   async listAll() {
     const { data, error } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
     if (error) throw error;
